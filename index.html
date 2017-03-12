@@ -81,9 +81,15 @@
         date.innerHTML = response.date;
         base.innerHTML = response.base;
         for (var key in response.rates) {
-          var rate = document.createElement("p");
-          rate.innerText = key + ": " + response.rates[key];
-          rates.appendChild(rate);
+          var entry = document.createElement("p");
+          entry.innerText = "";
+          var exchange = response.rates[key];
+          if (exchange > 1){
+            entry.innerText = "💰";
+          }
+          entry.innerText = entry.innerText + key + ": " + response.rates[key];
+
+          rates.appendChild(entry);
           }
           }
         }
