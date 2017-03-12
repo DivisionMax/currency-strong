@@ -62,39 +62,34 @@
     </div> <!-- /container -->        
         <script src="js/vendor/jquery-1.11.2.min.js"></script>
         <script src="js/vendor/bootstrap.min.js"></script>
-        <script src="js/main.js">
-
-        </script>
+        <script src="js/main.js"></script>
         <script>
+        $(document).ready(function() {
+                   var date = document.getElementById("date");
+                   var base = document.getElementById("base");
+                  var rates = document.getElementById("rates");
 
-          var date;
-          var base;
-          var rates;
+          var url = 'http://api.fixer.io/latest';
 
-                  $(document).ready(function() {
+      var xmlHttp = new XMLHttpRequest();
+        xmlHttp.onreadystatechange = function() { 
+                    console.log("state has changed");
 
-                    date = document.getElementById("date");
-                    base = document.getElementById("base");
-                    rates = document.getElementById("rates");
-
-// Create the JSONP
-var tag = document.createElement("script");
-tag.src = 'http://api.fixer.io/latest?callback=api_callback';
-document.getElementsByTagName("head")[0].appendChild(tag);
+        if (xmlHttp.readyState == 4 && xmlHttp.status == 200){
+          var response = JSON.parse(xmlHttp.responseText);
+          console.log(response);
+        date.innerHTML = response.date;
+        base.innerHTML = response.base;
+        for (var key in response.rates) {
+          var rate = document.createElement("p");
+          rate.innerText = key + ": " + response.rates[key];
+          rates.appendChild(rate);
+          }
+          }
+        }
+    xmlHttp.open("GET", url, true); // true for asynchronous 
+    xmlHttp.send(null);
                 }); //document.ready
-
-          function api_callback(response) {
-            date.innerHTML = response.date;
-            base.innerHTML = response.base;
-            var rates_paragraph = "";
-for (var key in response.rates) {
-  var rate = document.createElement("p");
-  rate.innerText = key + ": " + response.rates[key];
-  rates.appendChild(rate);
-}           
-            };
-
-
         </script>
     </body>
 </html>
