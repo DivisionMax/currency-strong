@@ -73,26 +73,18 @@
 
         </script>
         <script>
+
+          function api_callback(response) {
+            text = response.date + " " + response.base + " " + response.rates;
+            document.getElementById("response").innerHTML = text ;
+            };
+
         $(document).ready(function() {
-            var xhr = new XMLHttpRequest();
-            var method = "GET";
-            var url = "http://api.fixer.io/latest";
-            var response = document.getElementById('response');
-            xhr.open(method, url, true);
-            xhr.onload = function (e) {
-              if (xhr.readyState === 4) {
-                if (xhr.status === 200) {
-                  // JSON.parse();
-                  response.innerText = xhr.responseText;
-                  } else {
-                    response.innerText = xhr.statusText;
-                    }
-              }
-              };
-              xhr.onerror = function (e) {
-                response.innerText = xhr.statusText;
-                };
-                xhr.send();
+
+// Create the JSONP
+var tag = document.createElement("script");
+tag.src = 'http://api.fixer.io/latest?callback=api_callback';
+document.getElementsByTagName("head")[0].appendChild(tag);
                 }); //document.ready
         </script>
     </body>
