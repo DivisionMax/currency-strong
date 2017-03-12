@@ -89,7 +89,12 @@ document.getElementsByTagName("head")[0].appendChild(tag);
             var rates_paragraph = "";
 for (var key in response.rates) {
   var rate = document.createElement("p");
-  rate.innerText = key + ": " + response.rates[key];
+              rate.innerText = "";
+          var exchange = response.rates[key];
+          if (exchange > 1){
+            rate.innerText = "💰";
+          }
+          rate.innerText = rate.innerText + key + ": " + response.rates[key];
   rates.appendChild(rate);
 }           
             };
