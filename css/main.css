@@ -4,6 +4,17 @@
    Author's custom styles
    ========================================================================== */
 
+text {
+  font: bold 24px monospace;
+}
+
+.enter{
+    fill:green;
+}
+
+.update{
+    fill: grey; 
+}
 
 
 
