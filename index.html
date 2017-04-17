@@ -51,7 +51,7 @@
         <div class="col-md-4">
           <h1>Response</h1>
           <h2 id="date"></h2>
-          <h3 id="base"></h3>
+          <h3 id="base">Euro</h3>
           <svg height="960" width="500"></svg>
         </div>
       </div>
@@ -72,29 +72,61 @@
           var date;
           var base;
           var ratesData;
-          
+          var previousRatesData;
+
+          var currencies = 
+          ["AUD", "BGN", "BRL", "CAD", "CHF", "CNY", 
+          "CZK", "DKK", "GBP", "HKD", "HRK", 
+          "HUF", "IDR", "ILS", "INR", "JPY", 
+          "KRW", "MXN", "MYR", "NOK", "NZD", 
+          "PHP", "PLN", "RON", "RUB", "SEK", 
+          "SGD", "THB", "TRY", "USD", "ZAR"];
+
+       
 
                   $(document).ready(function() {
 
                     date = document.getElementById("date");
-                    base = document.getElementById("base");
+                    date.innterHTML = Date();
+                    // base = document.getElementById("base");
   //Create the JSONP
-var tag = document.createElement("script");
-tag.src = 'http://api.fixer.io/latest?callback=api_callback';
-document.getElementsByTagName("head")[0].appendChild(tag);
+// var tag = document.createElement("script");
+// tag.src = 'http://api.fixer.io/latest?callback=api_callback';
+// document.getElementsByTagName("head")[0].appendChild(tag);
+          //Generate random currency rates
+          d3.interval(function() {
+
+            var random_currencies = d3.shuffle(currencies)
+      .slice(0, Math.floor(Math.random() * currencies.length))
+      .sort();
+      var random_rates = {};
+      
+      
+            for(i = 0; i < random_currencies.length; i++){
+               random_rates[random_currencies[i]] = Math.random() * 100;
+            } 
+            var temp = ratesData;
+            ratesData = random_rates;
+            if (previousRatesData == null){
+              previousRatesData = ratesData;
+            }else{
+              previousRatesData = temp;
+            }
+        update(d3.keys(ratesData));
+}, 1500);
                 }); //document.ready
 
 
-          function api_callback(response) {
-            date.innerHTML = response.date;
-            base.innerHTML = response.base;
-            ratesData = response.rates;
-             update(d3.keys(ratesData)); //only pass the keys
-           };
+          // function api_callback(response) {
+          //   date.innerHTML = response.date;
+          //   base.innerHTML = response.base;
+          //   ratesData = response.rates;
+          //    update(d3.keys(ratesData)); //only pass the keys
+          //  };
             var svg = d3.select("svg"),
-    width = +svg.attr("width"),
-    height = +svg.attr("height"),
-    g = svg.append("g");
+            width = +svg.attr("width"),
+            height = +svg.attr("height"),
+            g = svg.append("g");
            
 function update(data) {
   var t = d3.transition()
@@ -102,11 +134,10 @@ function update(data) {
 
   // JOIN new data with old elements.
   var text = g.selectAll("text")
-    .data(data, function(d) { return d; });
+    .data(data, function(d) { return d;});
 
   // EXIT old elements not present in new data.
   text.exit()
-      .attr("class", "exit")
       .transition(t)
       .attr("x", 60)
       .style("fill-opacity", 1e-6)
@@ -114,18 +145,24 @@ function update(data) {
 
   // UPDATE old elements present in new data.
   text.attr("class", "update")
+        .attr("class", function(d){
+          var old_rate = previousRatesData[d];
+          var new_rate = ratesData[d];
+
+          if (old_rate != null && parseFloat(new_rate) > parseFloat(old_rate)){
+            return "up";
+          }else{
+            return "down";
+          }
+        })
       .style("fill-opacity", 1)
       .transition(t)
       .attr("y", function(d, i) { return i * 32; });
 
   // ENTER new elements present in new data.
   text.enter().append("text")
-      .attr("class", "enter")
       .attr("x", -60)
-      .attr("y", function(d, i) { 
-        console.log(d + " " + i); 
-        return i * 32; 
-        })
+      .attr("y", function(d, i) { return i * 32; })
       .style("fill-opacity", 1e-6)
       .text(function(d) { return d + ": " + ratesData[d]; 
       })

@@ -8,8 +8,12 @@ text {
   font: bold 24px monospace;
 }
 
-.enter{
+.up{
     fill:green;
+}
+
+.down{
+    fill:red;
 }
 
 .update{
